@@ -1,4 +1,4 @@
-[8/26/26 11:13 AM] Pulsar: Professional Digital Menu App — AI Build Prompt
+Professional Digital Menu App — AI Build Prompt
 Here's a comprehensive, structured prompt you can hand to an AI coding agent. It's organized so each section is independently scoped, which helps with multi-turn generation.
 
 The Prompt
