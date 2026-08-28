@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { prisma } from '../lib/prisma.js'
 
@@ -71,7 +71,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return reply.code(400).send({ 
-          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.errors } 
+          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.issues } 
         })
       }
       throw error
@@ -79,7 +79,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Get categories for restaurant
-  fastify.get('/api/v1/restaurants/:restaurantId/categories', async (request, reply) => {
+  fastify.get('/api/v1/restaurants/:restaurantId/categories', async (request) => {
     const { restaurantId } = request.params as { restaurantId: string }
     
     const categories = await prisma.category.findMany({
@@ -96,7 +96,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Update category
-  fastify.patch('/api/v1/categories/:id', async (request, reply) => {
+  fastify.patch('/api/v1/categories/:id', async (request) => {
     const { id } = request.params as { id: string }
     
     const category = await prisma.category.update({
@@ -108,7 +108,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Delete category
-  fastify.delete('/api/v1/categories/:id', async (request, reply) => {
+  fastify.delete('/api/v1/categories/:id', async () => {
     const { id } = request.params as { id: string }
     
     await prisma.category.delete({
@@ -126,7 +126,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
       const menuItem = await prisma.menuItem.create({
         data: {
           ...body,
-          restaurantId: body.categoryId // Will be set via category relation
+          restaurantId: body.categoryId
         }
       })
 
@@ -134,7 +134,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return reply.code(400).send({ 
-          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.errors } 
+          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.issues } 
         })
       }
       throw error
@@ -142,7 +142,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Get menu items for restaurant
-  fastify.get('/api/v1/restaurants/:restaurantId/items', async (request, reply) => {
+  fastify.get('/api/v1/restaurants/:restaurantId/items', async (request) => {
     const { restaurantId } = request.params as { restaurantId: string }
     
     const menuItems = await prisma.menuItem.findMany({
@@ -157,8 +157,8 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Get menu item by ID
-  fastify.get('/api/v1/items/:id', async (request, reply) => {
-    const { id } = request.params as { id: string }
+  fastify.get('/api/v1/items/:id', async (req: FastifyRequest, rep: FastifyReply) => {
+    const { id } = req.params as { id: string }
     
     const menuItem = await prisma.menuItem.findUnique({
       where: { id },
@@ -168,7 +168,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
     })
 
     if (!menuItem) {
-      return reply.code(404).send({ 
+      return rep.code(404).send({ 
         error: { code: 'NOT_FOUND', message: 'Menu item not found' } 
       })
     }
@@ -177,7 +177,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Update menu item
-  fastify.patch('/api/v1/items/:id', async (request, reply) => {
+  fastify.patch('/api/v1/items/:id', async (request) => {
     const { id } = request.params as { id: string }
     
     const menuItem = await prisma.menuItem.update({
@@ -189,7 +189,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Delete menu item
-  fastify.delete('/api/v1/items/:id', async (request, reply) => {
+  fastify.delete('/api/v1/items/:id', async () => {
     const { id } = request.params as { id: string }
     
     await prisma.menuItem.delete({
@@ -200,7 +200,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Toggle item availability
-  fastify.patch('/api/v1/items/:id/availability', async (request, reply) => {
+  fastify.patch('/api/v1/items/:id/availability', async (request) => {
     const { id } = request.params as { id: string }
     const { isAvailable } = request.body as { isAvailable: boolean }
     

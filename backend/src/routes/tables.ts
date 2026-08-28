@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { prisma } from '../lib/prisma.js'
 import QRCode from 'qrcode'
@@ -53,7 +53,7 @@ export async function registerTableRoutes(fastify: FastifyInstance) {
   })
 
   // Get tables for restaurant
-  fastify.get('/api/v1/restaurants/:restaurantId/tables', async (request, reply) => {
+  fastify.get('/api/v1/restaurants/:restaurantId/tables', async (request) => {
     const { restaurantId } = request.params as { restaurantId: string }
     
     const tables = await prisma.table.findMany({
@@ -85,7 +85,7 @@ export async function registerTableRoutes(fastify: FastifyInstance) {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return reply.code(400).send({ 
-          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.errors } 
+          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.issues } 
         })
       }
       throw error
@@ -93,7 +93,7 @@ export async function registerTableRoutes(fastify: FastifyInstance) {
   })
 
   // Get table by ID
-  fastify.get('/api/v1/tables/:id', async (request, reply) => {
+  fastify.get('/api/v1/tables/:id', async (request: FastifyRequest, reply: FastifyReply) => {
     const { id } = request.params as { id: string }
     
     const table = await prisma.table.findUnique({
@@ -117,7 +117,7 @@ export async function registerTableRoutes(fastify: FastifyInstance) {
   })
 
   // Update table
-  fastify.patch('/api/v1/tables/:id', async (request, reply) => {
+  fastify.patch('/api/v1/tables/:id', async (request) => {
     const { id } = request.params as { id: string }
     
     const table = await prisma.table.update({
@@ -129,7 +129,7 @@ export async function registerTableRoutes(fastify: FastifyInstance) {
   })
 
   // Delete table
-  fastify.delete('/api/v1/tables/:id', async (request, reply) => {
+  fastify.delete('/api/v1/tables/:id', async () => {
     const { id } = request.params as { id: string }
     
     await prisma.table.delete({

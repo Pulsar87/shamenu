@@ -1,19 +1,27 @@
 import { FastifyInstance } from 'fastify'
 
-/**
- * Authentication middleware for staff/users
- * Validates JWT tokens and attaches user to request
- */
+interface UserData {
+  id: string
+  email: string
+  role: string
+  restaurantId: string | null
+}
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    jwt: import('@fastify/jwt').JWT
+  }
+  interface FastifyRequest {
+    user?: UserData | null
+  }
+}
 
 export async function authMiddleware(fastify: FastifyInstance) {
   // Register JWT plugin
-  await fastify.register(require('@fastify/jwt'), {
+  await fastify.register(import('@fastify/jwt'), {
     secret: process.env.JWT_SECRET || 'super-secret-jwt-key-change-in-production'
   })
-
-  // Decorate request with user info
-  fastify.decorateRequest('user', null)
-
+  
   // Add authentication hook
   fastify.addHook('preHandler', async (request, reply) => {
     // Skip auth for public routes
@@ -50,7 +58,12 @@ export async function authMiddleware(fastify: FastifyInstance) {
       }
 
       // Verify JWT token
-      const decoded = await fastify.jwt.verify(token) as any
+      const decoded = await fastify.jwt.verify(token) as {
+        userId: string
+        email: string
+        role: string
+        restaurantId: string | null
+      }
       
       if (!decoded || !decoded.userId) {
         reply.code(401).send({ error: { code: 'INVALID_TOKEN', message: 'Invalid or expired token' } })
@@ -68,15 +81,4 @@ export async function authMiddleware(fastify: FastifyInstance) {
       reply.code(401).send({ error: { code: 'TOKEN_VERIFICATION_FAILED', message: 'Invalid token' } })
     }
   })
-}
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    user?: {
-      id: string
-      email: string
-      role: string
-      restaurantId: string | null
-    } | null
-  }
 }
