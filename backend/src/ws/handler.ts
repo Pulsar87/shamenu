@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
-import { WebSocket } from 'ws'
+import WebSocket, { WebSocketServer } from 'ws'
 
-interface WebSocketClient extends WebSocket {
+interface WSClient extends WebSocket {
   restaurantId?: string
   tableToken?: string
   userId?: string
@@ -19,13 +19,12 @@ interface WSEvent {
 
 /**
  * WebSocket handler for real-time updates
- * Manages connections for KDS, table guests, and admin dashboards
  */
 export async function wsHandler(fastify: FastifyInstance) {
-  const clients = new Map<string, Set<WebSocketClient>>()
+  const clients = new Map<string, Set<WSClient>>()
 
   fastify.get('/ws', { websocket: true }, (connection, req) => {
-    const ws = connection.socket as WebSocketClient
+    const ws = connection.socket as unknown as WSClient
     const url = new URL(req.url || '', 'http://localhost')
     const channel = url.searchParams.get('channel')
 
@@ -52,7 +51,7 @@ export async function wsHandler(fastify: FastifyInstance) {
     // Send initial snapshot request
     ws.send(JSON.stringify({ type: 'connected', channel }))
 
-    ws.on('message', async (message) => {
+    ws.on('message', async (message: Buffer) => {
       try {
         const event = JSON.parse(message.toString()) as WSEvent
         console.log(`[WS] Received event:`, event.type)
@@ -78,13 +77,13 @@ export async function wsHandler(fastify: FastifyInstance) {
       }
     })
 
-    ws.on('error', (error) => {
+    ws.on('error', (error: Error) => {
       console.error('[WS] Connection error:', error)
     })
 
     // Heartbeat
     const heartbeat = setInterval(() => {
-      if (ws.readyState === ws.OPEN) {
+      if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'ping', ts: Date.now() }))
       } else {
         clearInterval(heartbeat)
@@ -101,7 +100,7 @@ export async function wsHandler(fastify: FastifyInstance) {
 
     const message = JSON.stringify(event)
     channelClients.forEach((client) => {
-      if (client.readyState === client.OPEN) {
+      if (client.readyState === WebSocket.OPEN) {
         client.send(message)
       }
     })
@@ -125,7 +124,7 @@ export async function wsHandler(fastify: FastifyInstance) {
     const kdsChannel = `kds:${restaurantId}`
     const kdsClients = clients.get(kdsChannel)
     kdsClients?.forEach((client) => {
-      if (client.readyState === client.OPEN) {
+      if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(kdsEvent))
       }
     })
@@ -134,7 +133,7 @@ export async function wsHandler(fastify: FastifyInstance) {
     const adminChannel = `admin:${restaurantId}`
     const adminClients = clients.get(adminChannel)
     adminClients?.forEach((client) => {
-      if (client.readyState === client.OPEN) {
+      if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(adminEvent))
       }
     })
@@ -151,7 +150,7 @@ export async function wsHandler(fastify: FastifyInstance) {
     const channel = `table:${tableToken}`
     const channelClients = clients.get(channel)
     channelClients?.forEach((client) => {
-      if (client.readyState === client.OPEN) {
+      if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(event))
       }
     })

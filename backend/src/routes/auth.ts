@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { prisma } from '../lib/prisma.js'
-import bcrypt from 'bcryptjs'
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -68,7 +67,7 @@ export async function registerAuthRoutes(fastify: FastifyInstance) {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return reply.code(400).send({ 
-          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.errors } 
+          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.issues } 
         })
       }
       throw error
@@ -121,7 +120,7 @@ export async function registerAuthRoutes(fastify: FastifyInstance) {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return reply.code(400).send({ 
-          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.errors } 
+          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.issues } 
         })
       }
       throw error

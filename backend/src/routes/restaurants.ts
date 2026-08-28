@@ -54,7 +54,7 @@ export async function registerRestaurantRoutes(fastify: FastifyInstance) {
 
     const restaurants = await prisma.restaurant.findMany({
       where: request.user.role === 'OWNER' ? {} : {
-        users: { some: { id: request.user.id } }
+        users: { some: { userId: request.user.id } }
       },
       include: {
         _count: {
@@ -115,7 +115,7 @@ export async function registerRestaurantRoutes(fastify: FastifyInstance) {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return reply.code(400).send({ 
-          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.errors } 
+          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.issues } 
         })
       }
       throw error

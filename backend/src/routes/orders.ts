@@ -40,7 +40,6 @@ export async function registerOrderRoutes(fastify: FastifyInstance) {
 
       // Calculate totals
       let subtotalCents = 0
-      const orderItemsData = []
 
       for (const item of body.items) {
         const menuItem = await prisma.menuItem.findUnique({
@@ -62,14 +61,6 @@ export async function registerOrderRoutes(fastify: FastifyInstance) {
         const modifierTotal = item.modifiers?.reduce((sum, m) => sum + (m.extraPriceCents || 0), 0) || 0
         const lineTotal = (menuItem.priceCents + modifierTotal) * item.quantity
         subtotalCents += lineTotal
-
-        orderItemsData.push({
-          menuItemId: item.menuItemId,
-          quantity: item.quantity,
-          modifiers: item.modifiers || [],
-          specialInstructions: item.specialInstructions,
-          lineTotalCents: lineTotal
-        })
       }
 
       const taxRate = (table.restaurant.settings as any)?.taxRate || 0.08
@@ -103,7 +94,7 @@ export async function registerOrderRoutes(fastify: FastifyInstance) {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return reply.code(400).send({ 
-          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.errors } 
+          error: { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.issues } 
         })
       }
       console.error('Error creating order:', error)
@@ -138,7 +129,7 @@ export async function registerOrderRoutes(fastify: FastifyInstance) {
   })
 
   // Get orders for restaurant (staff)
-  fastify.get('/api/v1/restaurants/:restaurantId/orders', async (request, reply) => {
+  fastify.get('/api/v1/restaurants/:restaurantId/orders', async (request) => {
     const { restaurantId } = request.params as { restaurantId: string }
     const { status, limit = '50' } = request.query as { status?: string, limit?: string }
     
@@ -224,7 +215,7 @@ export async function registerOrderRoutes(fastify: FastifyInstance) {
   })
 
   // Cancel order
-  fastify.delete('/api/v1/orders/:id', async (request, reply) => {
+  fastify.delete('/api/v1/orders/:id', async (request) => {
     const { id } = request.params as { id: string }
     
     const order = await prisma.order.update({
