@@ -1,11 +1,13 @@
 import { FastifyInstance } from 'fastify'
-import WebSocket from 'ws'
+import { WebSocket } from 'ws'
 
 interface WSClient extends WebSocket {
   restaurantId?: string
   tableToken?: string
   userId?: string
 }
+
+const { OPEN } = WebSocket
 
 type WSChannel = `kds:${string}` | `table:${string}` | `admin:${string}`
 
@@ -82,7 +84,7 @@ export async function wsHandler(fastify: FastifyInstance) {
 
     // Heartbeat
     const heartbeat = setInterval(() => {
-      if (ws.readyState === WebSocket.OPEN) {
+      if (ws.readyState === OPEN) {
         ws.send(JSON.stringify({ type: 'ping', ts: Date.now() }))
       } else {
         clearInterval(heartbeat)
@@ -99,7 +101,7 @@ export async function wsHandler(fastify: FastifyInstance) {
 
     const message = JSON.stringify(event)
     channelClients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
+      if (client.readyState === OPEN) {
         client.send(message)
       }
     })
@@ -123,7 +125,7 @@ export async function wsHandler(fastify: FastifyInstance) {
     const kdsChannel = `kds:${restaurantId}`
     const kdsClients = clients.get(kdsChannel)
     kdsClients?.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
+      if (client.readyState === OPEN) {
         client.send(JSON.stringify(kdsEvent))
       }
     })
@@ -132,7 +134,7 @@ export async function wsHandler(fastify: FastifyInstance) {
     const adminChannel = `admin:${restaurantId}`
     const adminClients = clients.get(adminChannel)
     adminClients?.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
+      if (client.readyState === OPEN) {
         client.send(JSON.stringify(adminEvent))
       }
     })
@@ -149,7 +151,7 @@ export async function wsHandler(fastify: FastifyInstance) {
     const channel = `table:${tableToken}`
     const channelClients = clients.get(channel)
     channelClients?.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
+      if (client.readyState === OPEN) {
         client.send(JSON.stringify(event))
       }
     })
