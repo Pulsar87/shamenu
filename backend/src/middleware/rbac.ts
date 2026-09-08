@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify'
+import { UserData } from './auth.js'
 import { UserRole } from '@prisma/client'
 
 interface RBACConfig {
@@ -86,6 +87,7 @@ export async function rbacMiddleware(fastify: FastifyInstance) {
 
 declare module 'fastify' {
   interface FastifyRequest {
+    user: UserData
     checkPermission(action: string): void
   }
 }

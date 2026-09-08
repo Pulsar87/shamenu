@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyRequest } from 'fastify'
 
 interface UserData {
   id: string
@@ -11,9 +11,10 @@ declare module 'fastify' {
   interface FastifyInstance {
     jwt: import('@fastify/jwt').JWT
   }
-  interface FastifyRequest {
-    user?: UserData | null
-  }
+}
+
+export interface AuthenticatedRequest extends FastifyRequest {
+  user: UserData
 }
 
 export async function authMiddleware(fastify: FastifyInstance) {

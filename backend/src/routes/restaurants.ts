@@ -54,7 +54,7 @@ export async function registerRestaurantRoutes(fastify: FastifyInstance) {
 
     const restaurants = await prisma.restaurant.findMany({
       where: request.user.role === 'OWNER' ? {} : {
-        users: { some: { userId: request.user.id } }
+        users: { some: { id: request.user.id } }
       },
       include: {
         _count: {
@@ -96,7 +96,7 @@ export async function registerRestaurantRoutes(fastify: FastifyInstance) {
           ...body,
           users: {
             create: {
-              userId: request.user.id,
+              id: request.user.id,
               role: 'OWNER'
             }
           }
@@ -155,7 +155,7 @@ export async function registerRestaurantRoutes(fastify: FastifyInstance) {
   })
 
   // Update restaurant
-  fastify.patch('/api/v1/restaurants/:id', async (request, reply) => {
+  fastify.patch('/api/v1/restaurants/:id', async (request) => {
     const { id } = request.params as { id: string }
     
     const restaurant = await prisma.restaurant.update({
