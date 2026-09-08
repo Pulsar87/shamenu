@@ -108,7 +108,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Delete category
-  fastify.delete('/api/v1/categories/:id', async () => {
+  fastify.delete('/api/v1/categories/:id', async (request, reply) => {
     const { id } = request.params as { id: string }
     
     await prisma.category.delete({
@@ -177,7 +177,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Update menu item
-  fastify.patch('/api/v1/items/:id', async (request) => {
+  fastify.patch('/api/v1/items/:id', async (request, reply) => {
     const { id } = request.params as { id: string }
     
     const menuItem = await prisma.menuItem.update({
@@ -189,7 +189,7 @@ export async function registerMenuRoutes(fastify: FastifyInstance) {
   })
 
   // Delete menu item
-  fastify.delete('/api/v1/items/:id', async () => {
+  fastify.delete('/api/v1/items/:id', async (request, reply) => {
     const { id } = request.params as { id: string }
     
     await prisma.menuItem.delete({

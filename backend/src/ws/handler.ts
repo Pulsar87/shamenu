@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import WebSocket, { WebSocketServer } from 'ws'
+import WebSocket from 'ws'
 
 interface WSClient extends WebSocket {
   restaurantId?: string
@@ -23,8 +23,7 @@ interface WSEvent {
 export async function wsHandler(fastify: FastifyInstance) {
   const clients = new Map<string, Set<WSClient>>()
 
-  fastify.get('/ws', { websocket: true }, (connection, req) => {
-    const ws = connection.socket as unknown as WSClient
+  fastify.get('/ws', { websocket: true }, (ws, req) => {
     const url = new URL(req.url || '', 'http://localhost')
     const channel = url.searchParams.get('channel')
 

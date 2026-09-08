@@ -210,7 +210,7 @@ export async function registerOrderRoutes(fastify: FastifyInstance) {
     return {
       clientSecret: 'mock_client_secret_' + id,
       amount: order.totalCents,
-      currency: order.restaurant.currency || 'usd'
+      currency: order.restaurant?.currency || 'usd'
     }
   })
 
