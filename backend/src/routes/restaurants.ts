@@ -46,15 +46,16 @@ export async function registerRestaurantRoutes(fastify: FastifyInstance) {
 
   // Get all restaurants (for admin)
   fastify.get('/api/v1/restaurants', async (request, reply) => {
-    if (!request.user) {
+    const user = request.user
+    if (!user) {
       return reply.code(401).send({ 
         error: { code: 'UNAUTHORIZED', message: 'Not authenticated' } 
       })
     }
 
     const restaurants = await prisma.restaurant.findMany({
-      where: request.user.role === 'OWNER' ? {} : {
-        users: { some: { id: request.user.id } }
+      where: user.role === 'OWNER' ? {} : {
+        users: { some: { id: user.id } }
       },
       include: {
         _count: {
@@ -72,7 +73,8 @@ export async function registerRestaurantRoutes(fastify: FastifyInstance) {
 
   // Create restaurant
   fastify.post('/api/v1/restaurants', async (request, reply) => {
-    if (!request.user || request.user.role !== 'OWNER') {
+    const user = request.user
+    if (!user || user.role !== 'OWNER') {
       return reply.code(403).send({ 
         error: { code: 'FORBIDDEN', message: 'Only owners can create restaurants' } 
       })
@@ -95,19 +97,28 @@ export async function registerRestaurantRoutes(fastify: FastifyInstance) {
         data: {
           ...body,
           users: {
-            create: {
-              id: request.user.id,
+            create: [{
+              email: 'owner@placeholder.com',
               role: 'OWNER'
-            }
+            }]
           }
         },
         include: {
+          users: true,
           _count: {
             select: {
               menuItems: true,
               tables: true
             }
           }
+        }
+      })
+
+      // Update the first user with the actual user id
+      await prisma.user.update({
+        where: { id: restaurant.users[0].id },
+        data: {
+          id: user.id
         }
       })
 
