@@ -18,6 +18,8 @@
     "@fastify/websocket": "^11.3.0",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/ws": "^8.18.1",
     "bcryptjs": "^3.0.3",
     "bullmq": "^6.2.2",
     "fastify": "^5.12.1",
@@ -34,12 +36,10 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^26.3.0",
-    "@types/qrcode": "^1.5.6",
+    "@types/node": "^20.10.0",
     "@types/uuid": "^10.0.0",
-    "@types/ws": "^8.18.1",
     "tsx": "^4.23.12",
-    "typescript": "^7.0.2",
+    "typescript": "^5.7.0",
     "vitest": "^4.1.11"
   }
 }
