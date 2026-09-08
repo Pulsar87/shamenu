@@ -1,15 +1,21 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
 
-interface UserData {
+export interface UserData {
   id: string
   email: string
   role: string
   restaurantId: string | null
 }
 
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    user: UserData
+  }
+}
+
 declare module 'fastify' {
-  interface FastifyInstance {
-    jwt: import('@fastify/jwt').JWT
+  interface FastifyRequest {
+    user: UserData
   }
 }
 

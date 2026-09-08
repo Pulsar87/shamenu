@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify'
-import { UserData } from './auth.js'
 import { UserRole } from '@prisma/client'
 
 interface RBACConfig {
@@ -73,7 +72,7 @@ export function hasPermission(role: UserRole, action: string): boolean {
  */
 export async function rbacMiddleware(fastify: FastifyInstance) {
   // Add permission check decorator
-  fastify.decorateRequest('checkPermission', function(action: string) {
+  fastify.decorateRequest('checkPermission', function(this: import('fastify').FastifyRequest & { user: { role: string } }, action: string) {
     if (!this.user) {
       throw new Error('User not authenticated')
     }
@@ -83,11 +82,4 @@ export async function rbacMiddleware(fastify: FastifyInstance) {
       throw new Error(`Permission denied: ${action}`)
     }
   })
-}
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    user: UserData
-    checkPermission(action: string): void
-  }
 }

@@ -2,18 +2,10 @@
 # Dependencies
 node_modules/
 
-# Build outputs
-dist/
-build/
-target/
-
-# Python artifacts
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.py.class
-*.py.obj
+# Compiled JavaScript
+*.js.map
+*.min.js
+*.bundle.js
 
 # Logs
 *.log
@@ -28,38 +20,9 @@ __pycache__/
 .idea/
 *.swp
 *.swo
-*.tmp
 
-# Coverage reports
+# Build outputs
+dist/
+build/
 coverage/
-htmlcov/
-.coverage
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Compression files
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
 ```

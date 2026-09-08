@@ -129,7 +129,7 @@ export async function registerTableRoutes(fastify: FastifyInstance) {
   })
 
   // Delete table
-  fastify.delete('/api/v1/tables/:id', async (request, reply) => {
+  fastify.delete('/api/v1/tables/:id', async (request) => {
     const { id } = request.params as { id: string }
     
     await prisma.table.delete({
