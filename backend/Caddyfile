@@ -1,5 +1,5 @@
 :80 {
-    root * /usr/share/caddy
+    root * /srv/caddy
     file_server
 
     handle /api/* {

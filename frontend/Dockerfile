@@ -11,6 +11,6 @@ RUN npm run build
 # Production stage - serve built files with Caddy
 FROM caddy:2-alpine
 
-COPY --from=builder /app/dist /usr/share/caddy
+COPY --from=builder /app/dist /srv/caddy
 
 EXPOSE 80

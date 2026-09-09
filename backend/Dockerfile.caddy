@@ -1,0 +1,14 @@
+# Build stage - copy Caddyfile into image
+FROM caddy:2-alpine AS builder
+
+COPY Caddyfile /etc/caddy/Caddyfile
+
+# Production stage
+FROM caddy:2-alpine
+
+# Copy Caddyfile from builder
+COPY --from=builder /etc/caddy/Caddyfile /etc/caddy/Caddyfile
+
+EXPOSE 80 443
+
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

@@ -5,52 +5,57 @@ venv/
 .venv/
 __pycache__/
 *.egg-info/
-.pytest_cache/
-.mypy_cache/
+.Python
 
 # Build artifacts
 dist/
 build/
 target/
 *.pyc
-*.class
-*.o
-*.obj
+*.pyo
+*.pyd
 *.so
+*.dylib
 *.dll
 *.exe
+*.o
+*.obj
+*.a
+*.lib
 
-# Editor/IDE files
-.vscode/
-.idea/
+# Logs and temporary files
+*.log
+*.tmp
 *.swp
 *.swo
-*.tmp
-
-# Logs
-*.log
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# System files
+*~
 .DS_Store
 Thumbs.db
 
-# Compressed files
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
+# Environment variables
+.env
+.env.local
+.env.*
+
+# Coverage reports
+.coverage
+coverage/
+htmlcov/
+
+# IDE specific
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Icon?
+Thumbs.db
 ```
