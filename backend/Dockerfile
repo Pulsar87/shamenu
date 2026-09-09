@@ -8,7 +8,7 @@ RUN npm ci --include=dev
 
 # Copy prisma schema and generate client
 COPY prisma ./prisma
-
+COPY prisma.config.ts ./
 # Pass DATABASE_URL for Prisma generation and migrations at build time
 ARG DATABASE_URL=postgresql://menu_app:menu_app_password@postgres:5432/menu_app
 ENV DATABASE_URL=${DATABASE_URL}
