@@ -2,59 +2,8 @@
 # Dependencies
 node_modules/
 
-# Build outputs
-dist/
-build/
-*.js
-*.ts
-*.tsx
-
-# Environment variables
+# Environment
 .env
 .env.local
 *.env.*
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Distribution / packaging
-.Python
-*.so
-.wheelhouse/
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Testing
-.pytest_cache/
-.mypy_cache/
-.hypothesis/
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Local configuration
-.env.test
-.env.production
-.env.development
 ```
