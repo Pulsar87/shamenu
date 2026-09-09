@@ -226,5 +226,15 @@ export const api = {
   async getTableQR(id: string): Promise<{ qrCode: string; qrUrl: string; tableNumber: string }> {
     const response = await fetch(`${API_URL}/tables/${id}/qr`)
     return handleResponse(response)
+  },
+
+  async getOrders(restaurantId: string): Promise<Order[]> {
+    const response = await fetch(`${API_URL}/restaurants/${restaurantId}/orders`)
+    const data = await handleResponse<{ orders: Order[] }>(response)
+    return data.orders
   }
 }
+
+// Convenience exports for ChefView
+export const getOrderApi = api.getOrders.bind(api)
+export const updateOrderStatusApi = api.updateOrderStatus.bind(api)
