@@ -1,3 +1,12 @@
 :80 {
-    reverse_proxy app:3001
+    root * /srv/caddy
+    file_server
+
+    handle /api/* {
+        reverse_proxy app:3001
+    }
+
+    handle /ws {
+        reverse_proxy app:3001
+    }
 }

@@ -29,6 +29,16 @@ services:
       timeout: 5s
       retries: 5
 
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: menu_app_frontend
+    volumes:
+      - caddy_www:/srv/caddy:ro
+    depends_on:
+      - app
+
   app:
     build:
       context: .
@@ -53,9 +63,9 @@ services:
       redis:
         condition: service_healthy
     command: >
-      sh -c "npm run db:generate && 
-             npm run db:migrate && 
-             npm run db:seed && 
+      sh -c "npm run db:generate &&
+             npm run db:migrate &&
+             npm run db:seed &&
              npm start"
 
   caddy:
@@ -66,16 +76,19 @@ services:
       - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro,z
+      - caddy_www:/srv/caddy:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
       - app
+      - frontend
 
 volumes:
   postgres_data:
   redis_data:
   caddy_data:
   caddy_config:
+  caddy_www:
 
 networks:
   default:
