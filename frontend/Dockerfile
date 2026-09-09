@@ -8,9 +8,9 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Copy built files to a volume directory that caddy can serve
-FROM alpine:latest
-RUN mkdir -p /srv/caddy
-COPY --from=builder /app/dist/* /srv/caddy/
+# Production stage - serve built files with Caddy
+FROM caddy:2-alpine
 
-VOLUME /srv/caddy
+COPY --from=builder /app/dist /usr/share/caddy
+
+EXPOSE 80
