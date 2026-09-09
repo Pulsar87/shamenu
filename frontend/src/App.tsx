@@ -1,40 +1,38 @@
-import { useState } from 'react'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { CustomerMenuPage } from './pages/customer/CustomerMenuPage'
+import { StaffDashboard } from './pages/staff/StaffDashboard'
 
 function App() {
-  const [count, setCount] = useState(0)
-  
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold">Digital Menu App</h1>
-        </div>
-      </header>
-      
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h2 className="text-4xl font-bold mb-4">Welcome to Digital Menu</h2>
-          <p className="text-muted-foreground mb-6">
-            Your professional restaurant ordering platform
-          </p>
-          
-          <div className="bg-card rounded-lg shadow p-6 max-w-md mx-auto">
-            <h3 className="text-xl font-semibold mb-4">Get Started</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Edit <code className="bg-muted px-2 py-1 rounded">src/App.tsx</code> and save to test HMR
-            </p>
-            <button
-              type="button"
-              className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
-              onClick={() => setCount((count) => count + 1)}
-            >
-              Count is {count}
-            </button>
+    <BrowserRouter>
+      <Routes>
+        {/* Customer-facing menu page */}
+        <Route path="/m/:slug/t/:token" element={<CustomerMenuPage />} />
+        
+        {/* Staff dashboard - in production this would be protected by auth */}
+        <Route path="/staff/:restaurantId" element={<StaffDashboard restaurantId={""} />} />
+        
+        {/* Default route */}
+        <Route path="/" element={
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-4">Digital Menu App</h1>
+              <p className="text-muted-foreground mb-6">
+                Professional restaurant ordering platform
+              </p>
+              <div className="space-y-2">
+                <p className="text-sm">
+                  Customer: <code className="bg-muted px-2 py-1 rounded">/m/{'{slug}'}/t/{'{token}'}</code>
+                </p>
+                <p className="text-sm">
+                  Staff: <code className="bg-muted px-2 py-1 rounded">/staff/{'{restaurantId}'}</code>
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-      </main>
-    </div>
+        } />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
