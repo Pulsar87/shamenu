@@ -59,23 +59,35 @@ services:
              npm start"
 
   caddy:
-    image: caddy:2-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.caddy
     container_name: menu_app_caddy
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - frontend_dist:/srv/caddy:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
       - app
+      - frontend
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: menu_app_frontend
+    volumes:
+      - frontend_dist:/srv/caddy:ro
 
 volumes:
   postgres_data:
   redis_data:
   caddy_data:
   caddy_config:
+  frontend_dist:
 
 networks:
   default:
