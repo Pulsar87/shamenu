@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
+import bcrypt from 'bcryptjs'
 import { prisma } from '../lib/prisma.js'
 
 const loginSchema = z.object({
@@ -35,9 +36,11 @@ export async function registerAuthRoutes(fastify: FastifyInstance) {
         })
       }
 
-      // For demo, skip password check if no password set
-      // In production, store hashed passwords in User model
-      const validPassword = true
+      // Check password if stored
+      let validPassword = true
+      if (user.password) {
+        validPassword = await bcrypt.compare(body.password, user.password)
+      }
 
       if (!validPassword) {
         return reply.code(401).send({ 
@@ -89,10 +92,14 @@ export async function registerAuthRoutes(fastify: FastifyInstance) {
         })
       }
 
+      // Hash password
+      const hashedPassword = await bcrypt.hash(body.password, 10)
+
       const user = await prisma.user.create({
         data: {
           email: body.email,
           name: body.name,
+          password: hashedPassword,
           role: body.role || 'STAFF',
           restaurantId: body.restaurantId
         }
@@ -138,7 +145,7 @@ export async function registerAuthRoutes(fastify: FastifyInstance) {
     const user = await prisma.user.findUnique({
       where: { id: request.user.id },
       include: { restaurant: true },
-      omit: { createdAt: true, updatedAt: true }
+      omit: { password: true, createdAt: true, updatedAt: true }
     })
 
     if (!user) {

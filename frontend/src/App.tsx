@@ -1,7 +1,11 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import { ProtectedRoute } from './components/ProtectedRoute'
 import { CustomerMenuPage } from './pages/customer/CustomerMenuPage'
 import { StaffDashboard } from './pages/staff/StaffDashboard'
 import { ChefView } from './pages/staff/ChefView'
+import { LoginPage } from './pages/auth/LoginPage'
+import { RegisterPage } from './pages/auth/RegisterPage'
 import { QrCode, Utensils, Smartphone, Clock, CheckCircle, ArrowRight } from 'lucide-react'
 
 function LandingPage() {
@@ -20,7 +24,7 @@ function LandingPage() {
             <a href="#demo" className="text-gray-600 hover:text-orange-600 transition-colors">Demo</a>
           </nav>
           <Link 
-            to="/staff/1" 
+            to="/auth/login" 
             className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors font-medium"
           >
             Staff Login
@@ -192,21 +196,41 @@ function StepCard({ number, title, description }: { number: string, title: strin
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Landing Page - Default route */}
-        <Route path="/" element={<LandingPage />} />
-        
-        {/* Customer-facing menu page */}
-        <Route path="/m/:slug/t/:token" element={<CustomerMenuPage />} />
-        
-        {/* Staff dashboard - in production this would be protected by auth */}
-        <Route path="/staff/:restaurantId" element={<StaffDashboard restaurantId={""} />} />
-        
-        {/* Kitchen Display System */}
-        <Route path="/kds/:restaurantId" element={<ChefView restaurantId={""} />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Landing Page - Default route */}
+          <Route path="/" element={<LandingPage />} />
+          
+          {/* Auth pages */}
+          <Route path="/auth/login" element={<LoginPage />} />
+          <Route path="/auth/register" element={<RegisterPage />} />
+          
+          {/* Customer-facing menu page (no auth required) */}
+          <Route path="/m/:slug/t/:token" element={<CustomerMenuPage />} />
+          
+          {/* Staff dashboard - protected by auth */}
+          <Route 
+            path="/staff/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={['OWNER', 'MANAGER', 'STAFF', 'KITCHEN']}>
+                <StaffDashboard restaurantId="" />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Kitchen Display System - protected */}
+          <Route 
+            path="/kds/:restaurantId" 
+            element={
+              <ProtectedRoute allowedRoles={['OWNER', 'MANAGER', 'KITCHEN']}>
+                <ChefView restaurantId="" />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 

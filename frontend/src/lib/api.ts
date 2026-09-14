@@ -1,5 +1,15 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'
 
+let authToken: string | null = null
+
+export function setAuthToken(token: string | null) {
+  authToken = token
+}
+
+function getAuthHeaders() {
+  return authToken ? { Authorization: `Bearer ${authToken}` } : {}
+}
+
 export interface MenuItem {
   id: string
   categoryId: string
@@ -229,9 +239,37 @@ export const api = {
   },
 
   async getOrders(restaurantId: string): Promise<Order[]> {
-    const response = await fetch(`${API_URL}/restaurants/${restaurantId}/orders`)
+    const response = await fetch(`${API_URL}/restaurants/${restaurantId}/orders`, {
+      headers: getAuthHeaders()
+    })
     const data = await handleResponse<{ orders: Order[] }>(response)
     return data.orders
+  },
+
+  // Auth endpoints
+  async login(email: string, password: string): Promise<{ user: any; token: string }> {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    })
+    return handleResponse(response)
+  },
+
+  async register(email: string, password: string, name: string, restaurantId?: string, role?: string): Promise<{ user: any; token: string }> {
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, name, restaurantId, role })
+    })
+    return handleResponse(response)
+  },
+
+  async getCurrentUser(): Promise<{ user: any }> {
+    const response = await fetch(`${API_URL}/auth/me`, {
+      headers: getAuthHeaders()
+    })
+    return handleResponse(response)
   }
 }
 
