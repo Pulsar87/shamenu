@@ -1,188 +1,53 @@
 ```
 # Dependencies
 node_modules/
-.pnpm-store/
-.yarn/
-.yarn-cache/
+venv/
+.venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+target/
+.gradle/
 
-# Build outputs
+# Build artifacts
 dist/
 build/
-public/build/
-.next/
-.nuxt/
-out/
+*.pyc
+*.class
+*.o
+*.exe
+*.dll
+*.so
+*.a
+*.obj
+*.out
 
-# Environment variables
-.env
-.env.local
-.env.*
-!.env.example
-
-# Docker
-.dockerenv
-Dockerfile*
-docker-compose*
-
-# OS generated files
-.DS_Store
-Thumbs.db
-ehthumbs.db
-Icon?
-.directory
-.Trashes
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# Temporary folders
-tmp/
-temp/
-tmp_*/
-
-# Lock files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
-# Prisma
-prisma/migrations/
-prisma/schema.prisma.backup
-
-# Database
-*.db
-*.db-journal
-
-# IDE
+# Editor/IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+*.tmp
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-.venv/
-.env/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
+# Logs
 *.log
-.gitattributes
-.project
-.pydevproject
-.vscode/settings.json
-.mypy_cache/
-.pytest_cache/
-.hypothesis/
 
-# Node
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# System files
+.DS_Store
+Thumbs.db
 .env
+.env.local
+*.env.*
 
-# Go
-*.o
-*.a
-*.so
-*.exe
-*.test
-*.prof
-vendor/
-.air.toml
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
-# Java
-*.class
-*.jar
-*.war
-*.ear
-*.tar.gz
-target/
-.gradle/
-!src/main/webapp/WEB-INF/
-!src/main/resources/config/countries.csv
-
-# C/C++
-*.o
-*.a
-*.so
-*.dll
-*.dylib
-*.exe
-*.out
-*.obj
-
-# Ruby
-*.gem
-*.rbc
-.bundle/
-.config/
-vendor/bundle/
-Gemfile.lock
-
-# Rust
-target/
-Cargo.lock
-
-# .NET
-bin/
-obj/
-out/
-AppPackages/
-BundleArtifacts/
-*.nupkg
-*.msi
-*.msp
-*.localcache
-.vs/
-*.VC.db
-*.VC.VC.opendb
-
-# Android
-*.apk
-*.ap_
-build/
-.externalNativeBuild
-.gradle
-local.properties
-
-# iOS
-*.ipa
-*.dSYM.zip
-*.dSYM/
-build/
-
-# Compression
+# Compressed files
 *.zip
-*.tar
 *.gz
+*.tar
 *.tgz
 *.bz2
 *.xz
@@ -202,31 +67,4 @@ build/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-
-# Temporary files
-*.tmp
-*.temp
-*.bak
-*.backup
-
-# Sensitive files
-config/secrets.yml
-*.key
-*.pem
-*.p12
-*.pfx
-*.p7b
-*.crt
-*.cer
-*.der
-*.csr
-*.ovpn
-*.kdbx
-*.gpg
-*.asc
-*.pgp
-*.keychain
-*.jks
-*.keystore
-*.truststore
 ```
