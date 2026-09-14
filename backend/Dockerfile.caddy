@@ -1,6 +1,9 @@
 # Production stage - serve frontend and proxy API
 FROM caddy:2-alpine
 
+# Create the directory where frontend files will be mounted
+RUN mkdir -p /srv/caddy
+
 COPY Caddyfile /etc/caddy/Caddyfile
 
 EXPOSE 80 443

@@ -8,10 +8,11 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Production stage - serve built files with Caddy
-FROM caddy:2-alpine
+# Output stage - just copy the dist folder
+FROM alpine:latest
 
-COPY --from=builder /app/dist /srv/caddy
-COPY Caddyfile /etc/caddy/Caddyfile
+WORKDIR /app
 
-EXPOSE 80
+COPY --from=builder /app/dist ./dist
+
+CMD ["echo", "Frontend built successfully"]
