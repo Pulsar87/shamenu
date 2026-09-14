@@ -52,11 +52,16 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"const http = require('http'); const req = http.get('http://localhost:3001/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.setTimeout(5000);\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
     command: >
       sh -c "npm run db:generate &&
              npm run db:migrate &&
-             npm run db:seed &&
-             npm start"
+             node dist/server.js"
 
   caddy:
     build:
@@ -73,8 +78,6 @@ services:
     depends_on:
       frontend:
         condition: service_completed_successfully
-      app:
-        condition: service_healthy
 
   frontend:
     build:
