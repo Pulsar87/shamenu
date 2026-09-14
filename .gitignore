@@ -1,30 +1,14 @@
 ```
 # Dependencies
 node_modules/
+.pnpm-store/
 
-# Build artifacts
+# Build outputs
 dist/
 build/
-target/
-
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.py.class
-.Python
-env/
-venv/
-.venv/
-.venv.bak/
-pip-log.txt
-pip-selfcheck.json
-.python-version
-.mypy_cache/
-.pytest_cache/
-.coverage
-coverage/
+.next/
+.nuxt/
+public/build/
 
 # Environment variables
 .env
@@ -32,142 +16,42 @@ coverage/
 .env.*
 !.env.example
 
-# IDE files
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-selfcheck.json
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Database
+prisma/migrations/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# Temporary files
 *.tmp
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Logs
-*.log
-
-# Prisma
-prisma/migrations/
-prisma/schema.prisma.bak
-
-# TypeScript/JavaScript
-*.tsbuildinfo
-.next/
-.nuxt/
-public/build/
-.nyc_output/
-coverage/
-lib-cov/
-
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output/
-
-# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
-
-# Bower dependency directory (https://bower.io/)
-bower_components/
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
-
-# Dependency directories
-jspm_packages/
-
-# Webpack
-webpack-stats.json
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Next.js
-.next
-out/
-
-# Nuxt.js
-.nuxt
-dist/
-
-# Gatsby.js
-.cache/
-public/
-
-# Vue.js
-.vuepress/dist
-.static/
-.temp/
-
-# Meteor.js
-.meteor/local
-
-# Ionic Framework
-Ionic/www/
-Ionic/plugins/
-Ionic/platforms/
-
-# Cordova
-hooks/
-platforms/
-plugins/
-www/
-
-# React Native
-node_modules/
-ios/Pods/
-android/build/
-*.apk
-*.aab
-
-# Electron
-node_modules/
-release/
-dist-electron/
-
-# Rust
-target/
-
-# Go
-*.o
-*.a
-*.swp
-*~
-.DS_Store
-.svn/
-CVS/
-
-# Java
-*.class
-*.jar
-*.war
-*.ear
-hs_err_pid*
-replay_pid*
-
-# Gradle
-.gradle/
-build/
-
-# Maven
-target/
-
-# C#
-bin/
-obj/
+*.temp
 ```
