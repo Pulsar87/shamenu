@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import type { MenuItem, Order } from '../../lib/api'
 import { api } from '../../lib/api'
@@ -31,11 +31,11 @@ export function CustomerMenuPage() {
   }, [token, slug])
 
   // WebSocket for order updates
-  const handleWSMessage = (event: any) => {
+  const handleWSMessage = useCallback((event: any) => {
     if (event.type === 'order.status_changed' && currentOrder && event.orderId === currentOrder.id) {
       setCurrentOrder((prev: any) => prev ? { ...prev, status: event.status } : null)
     }
-  }
+  }, [currentOrder])
 
   const { isConnected } = useWebSocket({
     channel: token ? `table:${token}` : '',

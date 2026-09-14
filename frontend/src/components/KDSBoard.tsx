@@ -1,5 +1,6 @@
 import type { Order } from '../lib/api'
 import { useWebSocket } from '../hooks/useWebSocket'
+import { useCallback } from 'react'
 
 interface KDSBoardProps {
   restaurantId: string
@@ -8,10 +9,10 @@ interface KDSBoardProps {
 }
 
 export function KDSBoard({ restaurantId, orders, onUpdateStatus }: KDSBoardProps) {
-  const handleWSMessage = (event: any) => {
+  const handleWSMessage = useCallback((event: any) => {
     console.log('[KDS] Received WS event:', event)
     // Orders will be refreshed via polling or parent component
-  }
+  }, [])
 
   const { isConnected } = useWebSocket({
     channel: `kds:${restaurantId}`,
