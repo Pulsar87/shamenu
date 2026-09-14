@@ -37,6 +37,8 @@ services:
     volumes:
       - frontend_dist:/app/dist:ro
     restart: "no"
+    profiles:
+      - build-once
 
   app:
     build:
@@ -61,8 +63,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      frontend:
-        condition: service_completed_successfully
+    volumes:
+      - ../frontend/dist:/srv/caddy/frontend:ro
     healthcheck:
       test: ["CMD-SHELL", "node -e \"const http = require('http'); const req = http.get('http://localhost:3001/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.setTimeout(5000);\""]
       interval: 10s
@@ -83,12 +85,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - frontend_dist:/srv/caddy:ro
+      - ../frontend/dist:/srv/caddy/frontend:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      frontend:
-        condition: service_completed_successfully
       app:
         condition: service_healthy
 
@@ -97,7 +97,6 @@ volumes:
   redis_data:
   caddy_data:
   caddy_config:
-  frontend_dist:
 
 networks:
   default:
