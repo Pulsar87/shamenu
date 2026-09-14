@@ -6,7 +6,7 @@ export function setAuthToken(token: string | null) {
   authToken = token
 }
 
-function getAuthHeaders() {
+function getAuthHeaders(): Record<string, string> {
   return authToken ? { Authorization: `Bearer ${authToken}` } : {}
 }
 
@@ -93,6 +93,8 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export const api = {
+  setAuthToken,
+
   // Public menu endpoints
   async getMenu(slug: string): Promise<{ menu: Category[] }> {
     const response = await fetch(`${API_URL}/public/restaurants/${slug}/menu`)
