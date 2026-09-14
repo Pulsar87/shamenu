@@ -44,6 +44,7 @@ async function main() {
     create: {
       email: 'owner@example.com',
       name: 'Restaurant Owner',
+      password: hashedPassword,
       role: 'OWNER',
       restaurantId: restaurant.id
     }
@@ -58,6 +59,7 @@ async function main() {
     create: {
       email: 'manager@example.com',
       name: 'Restaurant Manager',
+      password: hashedPassword,
       role: 'MANAGER',
       restaurantId: restaurant.id
     }
@@ -72,6 +74,7 @@ async function main() {
     create: {
       email: 'kitchen@example.com',
       name: 'Kitchen Staff',
+      password: hashedPassword,
       role: 'KITCHEN',
       restaurantId: restaurant.id
     }

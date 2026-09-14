@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../../lib/api'
 import { useRestaurantOrders } from '../../hooks/useMenu'
 import { KDSBoard } from '../../components/KDSBoard'
+import { useAuth } from '../../context/AuthContext'
+import { LogOut, User as UserIcon } from 'lucide-react'
 
 interface StaffDashboardProps {
   restaurantId: string
@@ -10,14 +13,32 @@ interface StaffDashboardProps {
 export function StaffDashboard({ restaurantId }: StaffDashboardProps) {
   const [activeTab, setActiveTab] = useState<'kds' | 'menu' | 'tables'>('kds')
   const { orders, updateOrderStatus } = useRestaurantOrders(restaurantId)
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/auth/login')
+  }
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b p-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Staff Dashboard</h1>
-          <nav className="flex gap-2">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold">Staff Dashboard</h1>
+            {user && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <UserIcon className="h-4 w-4" />
+                <span>{user.name || user.email}</span>
+                <span className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded-full text-xs">
+                  {user.role}
+                </span>
+              </div>
+            )}
+          </div>
+          <nav className="flex gap-2 items-center">
             <button
               onClick={() => setActiveTab('kds')}
               className={`px-4 py-2 rounded-md font-medium transition-colors ${
@@ -47,6 +68,13 @@ export function StaffDashboard({ restaurantId }: StaffDashboardProps) {
               }`}
             >
               Tables
+            </button>
+            <button
+              onClick={handleLogout}
+              className="ml-4 px-4 py-2 rounded-md font-medium transition-colors hover:bg-red-50 text-red-600 flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
             </button>
           </nav>
         </div>
