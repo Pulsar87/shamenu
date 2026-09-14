@@ -71,8 +71,10 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - app
-      - frontend
+      frontend:
+        condition: service_completed_successfully
+      app:
+        condition: service_healthy
 
   frontend:
     build:
@@ -81,6 +83,7 @@ services:
     container_name: menu_app_frontend
     volumes:
       - frontend_dist:/srv/caddy:ro
+    restart: "no"
 
 volumes:
   postgres_data:
