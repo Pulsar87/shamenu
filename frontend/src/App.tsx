@@ -23,12 +23,20 @@ function LandingPage() {
             <a href="#how-it-works" className="text-gray-600 hover:text-orange-600 transition-colors">How It Works</a>
             <a href="#demo" className="text-gray-600 hover:text-orange-600 transition-colors">Demo</a>
           </nav>
-          <Link 
-            to="/auth/login" 
-            className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors font-medium"
-          >
-            Staff Login
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link 
+              to="/auth/register" 
+              className="text-gray-700 hover:text-orange-600 transition-colors font-medium"
+            >
+              Sign Up
+            </Link>
+            <Link 
+              to="/auth/login" 
+              className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors font-medium"
+            >
+              Staff Login
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -144,10 +152,17 @@ function LandingPage() {
               <ArrowRight className="h-5 w-5" />
             </Link>
             <Link 
-              to="/staff/1" 
+              to="/auth/register" 
+              className="bg-gray-100 text-gray-700 border-2 border-gray-200 px-8 py-4 rounded-xl hover:border-orange-600 hover:text-orange-600 transition-colors font-semibold text-lg inline-flex items-center justify-center gap-2"
+            >
+              Create Account
+              <CheckCircle className="h-5 w-5" />
+            </Link>
+            <Link 
+              to="/auth/login" 
               className="bg-gray-900 text-white px-8 py-4 rounded-xl hover:bg-gray-800 transition-colors font-semibold text-lg inline-flex items-center justify-center gap-2"
             >
-              View Staff Dashboard
+              Staff Login
               <Utensils className="h-5 w-5" />
             </Link>
           </div>
