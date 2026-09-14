@@ -29,6 +29,16 @@ build/
 *.swo
 *.tmp
 
+# Logs
+*.log
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
 # System files
 .DS_Store
 Thumbs.db
@@ -36,8 +46,9 @@ Thumbs.db
 .env.local
 *.env.*
 
-# Logs
-*.log
+# System files
+.DS_Store
+Thumbs.db
 
 # Coverage
 coverage/
