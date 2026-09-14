@@ -21,6 +21,12 @@ export function useWebSocket({ channel, onMessage, reconnectAttempts = 5 }: UseW
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectCountRef = useRef(0)
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const onMessageRef = useRef(onMessage)
+
+  // Keep the ref updated without causing re-renders
+  useEffect(() => {
+    onMessageRef.current = onMessage
+  }, [onMessage])
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -50,7 +56,7 @@ export function useWebSocket({ channel, onMessage, reconnectAttempts = 5 }: UseW
             return
           }
 
-          onMessage?.(data)
+          onMessageRef.current?.(data)
         } catch (error) {
           console.error('[WS] Error parsing message:', error)
         }
@@ -82,7 +88,7 @@ export function useWebSocket({ channel, onMessage, reconnectAttempts = 5 }: UseW
     } catch (error) {
       console.error('[WS] Failed to create WebSocket:', error)
     }
-  }, [channel, onMessage, reconnectAttempts])
+  }, [channel, reconnectAttempts])
 
   useEffect(() => {
     connect()
