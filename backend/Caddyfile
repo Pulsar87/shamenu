@@ -4,10 +4,14 @@
     try_files {path} /index.html
 
     handle /api/* {
-        reverse_proxy app:3001
+        reverse_proxy menu_app_backend:3001
     }
 
     handle /ws {
         reverse_proxy app:3001
+    }
+
+    log {
+        output file /var/log/caddy/access.log
     }
 }
