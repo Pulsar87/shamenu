@@ -58,6 +58,14 @@ services:
              npm run db:migrate &&
              node dist/server.js"
 
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: menu_app_frontend
+    volumes:
+      - frontend_dist:/app/dist
+
   caddy:
     build:
       context: .
@@ -68,10 +76,15 @@ services:
     depends_on:
       app:
         condition: service_healthy
+      frontend:
+          condition: service_completed_successfully
+    volumes:
+      - frontend_dist:/srv/caddy/frontend:ro
 
 volumes:
   postgres_data:
   redis_data:
+  frontend_dist:
 
 networks:
   default:

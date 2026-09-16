@@ -15,10 +15,9 @@ Sirved, Yelp, and Toast POS. Follow the specs below exactly.
 - Frontend (Staff/KDS dashboard):
   Same Next.js app, separate /staff route group with auth guard.
 - Backend:
-  Node.js 22 + Fastify 5 + TypeScript.
-  REST for CRUD, WebSocket (ws) for real-time KDS + table state.
+  Node.js 22 + TypeScript.
 - Database:
-  PostgreSQL 16 (Prisma ORM). Use Prisma migrations, seed scripts.
+  PostgreSQL 16. Use migrations, seed scripts.
 - Cache / Queue:
   Redis 7 (Upstash) for session store + BullMQ for background jobs
   (order lifecycle, push notifications, analytics aggregation).
@@ -30,13 +29,13 @@ Sirved, Yelp, and Toast POS. Follow the specs below exactly.
   NextAuth v5 (Auth.js) — email+password, Google OAuth,
   and short-lived "table guest" tokens (no account required).
 - Hosting:
-  Docker Compose (app, postgres, redis, caddy reverse proxy).
+  Docker Compose (app, postgres, redis).
   Target deploy: Railway / Fly.io / any container host.
 - Testing:
   Vitest (unit), Playwright (E2E happy-path: browse → order → pay).
 
 ═══════════════════════════════════════════════
-2. DATA MODEL (Prisma schema — include full schema)
+2. DATA MODEL ( include full schema)
 ═══════════════════════════════════════════════
 
 
@@ -81,18 +80,18 @@ Flow:
      - Tap item → modal sheet with variant/modifier picker,
        quantity stepper, special-instructions textarea.
      - Search bar (debounced, client-side filter by name + tags).
-[8/26/26 11:13 AM] Pulsar: - Filter toggles: dietary (vegan, gluten-free, nut-free),
+     - Filter toggles: dietary (vegan, gluten-free, nut-free),
        "Available only", price range slider.
   c) Cart:
      - Floating bottom bar (item count + subtotal).
      - Expandable sheet: edit qty, remove, add tip %
        (0/10/15/20/custom).
      - "Send to Kitchen" → creates Order (status=PLACED),
-       fires WS event to KDS.
+       fires event to KDS.
      - "Pay now" → Stripe Checkout session (card, Apple Pay,
        Google Pay, or "Pay at table" link for staff).
   d) Post-order:
-     - Live order tracker (animated progress bar synced via WS):
+     - Live order tracker (animated progress bar synced):
        PLACED → PREPARING → READY → DELIVERED.
      - Push notification (Web Push / FCM) at each transition.
   e) Review screen (post-PAYED):
@@ -146,7 +145,6 @@ f) Settings:
 ═══════════════════════════════════════════════
 5. REAL-TIME ARCHITECTURE
 ═══════════════════════════════════════════════
-- WS server (Fastify + @fastify/websocket) on /ws.
 - Channels:
   /kds/{restaurant_id}     → order status changes
   /table/{table_token}     → guest-facing order tracker
@@ -183,11 +181,11 @@ Staff (JWT, role-scoped):
 Error format: { error: { code, message, details[] } }
 Pagination: cursor-based (?cursor=&limit=).
 Rate-limit: 100 req/min per IP (guest), 600/min (staff).
-[8/26/26 11:13 AM] Pulsar: ═══════════════════════════════════════════════
+═══════════════════════════════════════════════
 7. SECURITY & ACCESS CONTROL
 ═══════════════════════════════════════════════
 - All queries scoped by restaurant_id.
-  Enforce in Prisma middleware: reject if restaurant_id ≠ auth.
+  Enforce middleware: reject if restaurant_id ≠ auth.
 - RBAC matrix (OWNER / MANAGER / STAFF / KITCHEN):
   OWNER: everything incl. settings, billing, user mgmt.
   MANAGER: menu CRUD, orders, reviews, tables. No billing.
@@ -195,7 +193,7 @@ Rate-limit: 100 req/min per IP (guest), 600/min (staff).
   KITCHEN: KDS read + status advance only.
 - Helmet, CORS (allowlist), CSRF on cookie routes,
   input validation (Zod schemas on every input),
-  SQL injection safe (Prisma param binding),
+  SQL injection safe,
   file upload: MIME whitelist (jpeg, png, webp), size cap 10 MB,
   serve from CDN with signed URLs (15 min expiry).
 - Audit log table: (id, user_id, action, entity, entity_id,
@@ -237,21 +235,19 @@ Rate-limit: 100 req/min per IP (guest), 600/min (staff).
 ═══════════════════════════════════════════════
 For each, output complete, runnable code:
 
- 1. prisma/schema.prisma  (full schema + seed.ts)
- 2. docker-compose.yml  (app, postgres, redis, caddy)
+ 1. docker-compose.yml  (app, postgres, redis)
  3. Backend:
-    - src/server.ts (Fastify bootstrap, WS, plugins)
+    - src/server.ts (bootstrap, plugins)
     - src/routes/*.ts (all endpoints, Zod validation)
     - src/services/*.ts (order lifecycle, payment, analytics)
     - src/middleware/auth.ts, rbac.ts
-    - src/ws/handler.ts
+    - src/handler.ts
     - src/jobs/*.ts (BullMQ workers)
  4. Frontend:
     - app/m/[slug]/t/[token]/  (customer PWA)
     - app/staff/  (dashboard)
     - components/  (reusable, well-named)
     - lib/api.ts (typed fetch client)
-    - lib/ws.ts (WS client with reconnect)
     - i18n/en.json
  5. tests/
     - unit: order service, RBAC
@@ -273,14 +269,14 @@ For each, output complete, runnable code:
 - Every public function gets a one-line JSDoc.
 - Comments: explain WHY, not WHAT.
 - Git: conventional commits (feat:, fix:, docs:, etc.)
-[8/26/26 11:13 AM] Pulsar: ═══════════════════════════════════════════════
+═══════════════════════════════════════════════
 12. FIRST MILESTONE (build this first)
 ═══════════════════════════════════════════════
-Scaffold the project, create the Prisma schema,
+Scaffold the project, create the schema,
 stand up Docker Compose, implement:
   - Menu CRUD (staff)
   - Customer browse + cart + send-to-kitchen
-  - KDS board with WS live updates
+  - KDS board
   - Table QR generation
 Get the Playwright E2E test passing for:
   "Guest scans table → views menu → adds 2 items
@@ -298,4 +294,3 @@ A few practical tips:
 
 One feature per turn. The agent will produce higher-quality code when you ask for "implement the KDS WebSocket channel" rather than "build everything."
 Pin the stack. The prompt locks tech choices so the agent doesn't hallucinate a random framework swap mid-build.
-
