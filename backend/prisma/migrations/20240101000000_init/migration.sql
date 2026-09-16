@@ -31,6 +31,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "name" TEXT,
     "role" "UserRole" NOT NULL DEFAULT 'STAFF',
+    "password" TEXT NOT NULL,
     "restaurantId" TEXT,
     "avatar" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

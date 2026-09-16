@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyRequest } from 'fastify'
+import fastifyJwt from '@fastify/jwt'
 
 export interface UserData {
   id: string
@@ -25,14 +26,14 @@ export interface AuthenticatedRequest extends FastifyRequest {
 
 export async function authMiddleware(fastify: FastifyInstance) {
   // Register JWT plugin
-  await fastify.register(import('@fastify/jwt'), {
+  await fastify.register(fastifyJwt, {
     secret: process.env.JWT_SECRET || 'super-secret-jwt-key-change-in-production'
   })
-  
+
   // Add authentication hook
   fastify.addHook('preHandler', async (request, reply) => {
     // Skip auth for public routes
-    if (request.url.startsWith('/api/v1/public') || 
+    if (request.url.startsWith('/api/v1/public') ||
         request.url.startsWith('/api/v1/guest') ||
         request.url === '/api/v1/auth/login' ||
         request.url === '/api/v1/auth/register') {
@@ -50,7 +51,7 @@ export async function authMiddleware(fastify: FastifyInstance) {
           return
         }
       }
-      
+
       // Require auth for other routes
       reply.code(401).send({ error: { code: 'UNAUTHORIZED', message: 'Missing authorization header' } })
       return
@@ -58,7 +59,7 @@ export async function authMiddleware(fastify: FastifyInstance) {
 
     try {
       const [type, token] = authHeader.split(' ')
-      
+
       if (type !== 'Bearer' || !token) {
         reply.code(401).send({ error: { code: 'INVALID_TOKEN', message: 'Invalid authorization format' } })
         return
@@ -71,7 +72,7 @@ export async function authMiddleware(fastify: FastifyInstance) {
         role: string
         restaurantId: string | null
       }
-      
+
       if (!decoded || !decoded.userId) {
         reply.code(401).send({ error: { code: 'INVALID_TOKEN', message: 'Invalid or expired token' } })
         return

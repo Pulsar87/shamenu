@@ -22,6 +22,7 @@ export function RegisterPage() {
       await register(email, password, name, undefined, role)
       navigate('/staff/dashboard')
     } catch (err: any) {
+      console.error('Registration error:', err)
       setError(err.message || 'Registration failed. Please try again.')
     } finally {
       setIsLoading(false)
